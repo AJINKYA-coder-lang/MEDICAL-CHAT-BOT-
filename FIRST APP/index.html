@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediMind AI | Your Intelligent Health Companion</title>
+    <meta name="description"
+        content="Advanced AI-powered medical assistant for symptom checking, health tracking, and medical information.">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        // Protective session check
+        if (!localStorage.getItem('currentUser')) {
+            window.location.href = 'login.html';
+        }
+    </script>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <i class="fas fa-heartbeat"></i>
+                <span>MediMind</span>
+            </div>
+            <ul class="nav-links">
+                <li class="active" onclick="switchTab('chat')"><i class="fas fa-comment-medical"></i> Assistant</li>
+                <li onclick="switchTab('symptoms')"><i class="fas fa-stethoscope"></i> Symptom Check</li>
+                <li onclick="switchTab('reminders')"><i class="fas fa-clock"></i> Reminders</li>
+                <li onclick="switchTab('vitals')"><i class="fas fa-chart-line"></i> My Vitals</li>
+                <li onclick="switchTab('profile')"><i class="fas fa-user-circle"></i> My Profile</li>
+                <li onclick="handleLogout()" class="logout-link"><i class="fas fa-sign-out-alt"></i> Logout</li>
+            </ul>
+            <div class="user-profile">
+                <img id="user-avatar" src="https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff"
+                    alt="Profile">
+                <div class="user-info">
+                    <p class="name" id="user-display-name">Loading...</p>
+                    <p class="status">Premium User</p>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header -->
+            <header>
+                <div class="header-info">
+                    <h1 id="tab-title">Medical Assistant</h1>
+                    <p id="tab-subtitle">How can I help you today?</p>
+                </div>
+                <div class="header-actions">
+                    <button class="emergency-btn"><i class="fas fa-phone-alt"></i> EMERGENCY</button>
+                    <div class="notification-bell">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge">2</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Chat Section -->
+            <section id="chat-section" class="tab-content active">
+                <div class="chat-wrapper">
+                    <div id="chat-messages" class="chat-messages">
+                        <div class="message bot">
+                            <div class="message-content">
+                                Hello! I'm your MediMind Assistant. I can help with symptom analysis, general medical
+                                info, or health tracking. How are you feeling today?
+                            </div>
+                            <span class="message-time">Just now</span>
+                        </div>
+                    </div>
+                    <div class="chat-input-area">
+                        <div class="quick-actions">
+                            <button onclick="sendQuickMessage('I have a headache')">Headache</button>
+                            <button onclick="sendQuickMessage('Feeling dizzy')">Dizziness</button>
+                            <button onclick="sendQuickMessage('Chest pain')">Chest Pain</button>
+                        </div>
+                        <div class="input-container">
+                            <input type="text" id="user-input" placeholder="Type your symptoms or questions...">
+                            <button id="send-btn"><i class="fas fa-paper-plane"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Symptom Checker Section -->
+            <section id="symptoms-section" class="tab-content">
+                <div class="symptom-checker-card">
+                    <h2>Advanced Symptom Checker</h2>
+                    <p>Select your symptoms for an AI-powered preliminary analysis.</p>
+                    <div class="symptom-grid">
+                        <div class="symptom-item" data-symptom="Fever">
+                            <i class="fas fa-thermometer-half"></i>
+                            <span>Fever</span>
+                        </div>
+                        <div class="symptom-item" data-symptom="Cough">
+                            <i class="fas fa-wind"></i>
+                            <span>Cough</span>
+                        </div>
+                        <div class="symptom-item" data-symptom="Fatigue">
+                            <i class="fas fa-battery-quarter"></i>
+                            <span>Fatigue</span>
+                        </div>
+                        <div class="symptom-item" data-symptom="Headache">
+                            <i class="fas fa-brain"></i>
+                            <span>Headache</span>
+                        </div>
+                        <div class="symptom-item" data-symptom="Sore Throat">
+                            <i class="fas fa-virus"></i>
+                            <span>Sore Throat</span>
+                        </div>
+                        <div class="symptom-item" data-symptom="Nausea">
+                            <i class="fas fa-stomach"></i>
+                            <span>Nausea</span>
+                        </div>
+                    </div>
+                    <button class="analyze-btn">Analyze Selected Symptoms</button>
+                    <div id="analysis-result" class="hidden">
+                        <h3>AI Analysis Report</h3>
+                        <p id="result-text"></p>
+                        <div class="disclaimer">
+                            <strong>Note:</strong> This is not a diagnosis. Please consult a professional.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Reminders Section -->
+            <section id="reminders-section" class="tab-content">
+                <div class="reminders-container">
+                    <div class="reminder-form">
+                        <h3>Add New Reminder</h3>
+                        <div class="form-group">
+                            <input type="text" id="med-name" placeholder="Medication Name">
+                            <input type="time" id="med-time">
+                            <button id="add-reminder-btn">Add</button>
+                        </div>
+                    </div>
+                    <div class="reminders-list" id="reminders-list">
+                        <!-- Reminders will appear here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Vitals Section -->
+            <section id="vitals-section" class="tab-content">
+                <div class="vitals-grid">
+                    <div class="vital-card heart-rate">
+                        <i class="fas fa-heart"></i>
+                        <h3>Heart Rate</h3>
+                        <p class="value">72 <span>BPM</span></p>
+                        <p class="trend pos"><i class="fas fa-arrow-up"></i> 2 bpm from yesterday</p>
+                    </div>
+                    <div class="vital-card blood-pressure">
+                        <i class="fas fa-tint"></i>
+                        <h3>Blood Pressure</h3>
+                        <p class="value">120/80 <span>mmHg</span></p>
+                        <p class="trend normal">Normal range</p>
+                    </div>
+                    <div class="vital-card steps">
+                        <i class="fas fa-walking"></i>
+                        <h3>Daily Steps</h3>
+                        <p class="value">8,432</p>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: 84%"></div>
+                        </div>
+                    </div>
+                    <div class="vital-card sleep">
+                        <i class="fas fa-moon"></i>
+                        <h3>Sleep</h3>
+                        <p class="value">7h 20m</p>
+                        <p class="trend neg"><i class="fas fa-arrow-down"></i> 10m from yesterday</p>
+                    </div>
+                </div>
+
+                <!-- Daily Goals -->
+                <div class="goals-container" style="margin-top: 30px;">
+                    <h3>Daily Health Goals</h3>
+                    <div class="goals-grid"
+                        style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 15px;">
+                        <div class="goal-item"
+                            style="background: white; padding: 20px; border-radius: 20px; display: flex; align-items: center; gap: 15px; box-shadow: var(--shadow);">
+                            <div class="circular-progress"
+                                style="width: 50px; height: 50px; border-radius: 50%; background: conic-gradient(var(--primary-color) 70%, #e2e8f0 0); display: flex; align-items: center; justify-content: center; position: relative;">
+                                <div
+                                    style="width: 40px; height: 40px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 600;">
+                                    70%</div>
+                            </div>
+                            <div>
+                                <p style="font-weight: 600;">Water Intake</p>
+                                <p style="font-size: 0.8rem; color: var(--text-muted);">2.1L of 3L</p>
+                            </div>
+                        </div>
+                        <div class="goal-item"
+                            style="background: white; padding: 20px; border-radius: 20px; display: flex; align-items: center; gap: 15px; box-shadow: var(--shadow);">
+                            <div class="circular-progress"
+                                style="width: 50px; height: 50px; border-radius: 50%; background: conic-gradient(#10b981 45%, #e2e8f0 0); display: flex; align-items: center; justify-content: center; position: relative;">
+                                <div
+                                    style="width: 40px; height: 40px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 600;">
+                                    45%</div>
+                            </div>
+                            <div>
+                                <p style="font-weight: 600;">Calorie Burn</p>
+                                <p style="font-size: 0.8rem; color: var(--text-muted);">450 of 1000 kcal</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Profile Section -->
+            <section id="profile-section" class="tab-content">
+                <div class="profile-container">
+                    <div class="profile-header-card">
+                        <div class="profile-main-info">
+                            <img id="dashboard-avatar"
+                                src="https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff" alt="Avatar">
+                            <div>
+                                <h2 id="profile-name">Full Name</h2>
+                                <p id="profile-email">email@example.com</p>
+                                <span class="badge-premium">Premium Member</span>
+                            </div>
+                        </div>
+                        <button class="edit-profile-btn" onclick="toggleEditMode()"><i class="fas fa-edit"></i> Edit
+                            Profile</button>
+                    </div>
+
+                    <div class="profile-details-grid">
+                        <div class="detail-card">
+                            <h3>Personal Information</h3>
+                            <div class="info-row">
+                                <span class="label">Date Joined</span>
+                                <span class="value" id="info-joined">Jan 12, 2024</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Age</span>
+                                <input type="number" id="profile-age" class="profile-input" value="25" disabled>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Gender</span>
+                                <select id="profile-gender" class="profile-select" disabled>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                    <option value="Prefer not to say">Prefer not to say</option>
+                                </select>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Account Status</span>
+                                <span class="value" style="color: #10b981;">Active</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Last Activity</span>
+                                <span class="value">Today</span>
+                            </div>
+                        </div>
+
+                        <div class="detail-card">
+                            <h3>Health Profile</h3>
+                            <div class="info-row">
+                                <span class="label">Blood Group</span>
+                                <input type="text" id="profile-blood" class="profile-input" value="B+" disabled>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Height (cm)</span>
+                                <input type="number" id="profile-height" class="profile-input" value="175" disabled>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Weight (kg)</span>
+                                <input type="number" id="profile-weight" class="profile-input" value="70" disabled>
+                            </div>
+                        </div>
+
+                        <div class="detail-card">
+                            <h3>Medical History</h3>
+                            <div class="info-row-stack">
+                                <span class="label">Allergies</span>
+                                <textarea id="profile-allergies" class="profile-textarea"
+                                    placeholder="e.g. Peanuts, Penicillin" disabled>None</textarea>
+                            </div>
+                            <div class="info-row-stack">
+                                <span class="label">Chronic Conditions</span>
+                                <textarea id="profile-conditions" class="profile-textarea"
+                                    placeholder="e.g. Asthma, Hypertension" disabled>None</textarea>
+                            </div>
+                        </div>
+
+                        <div class="detail-card">
+                            <h3>Emergency Contact</h3>
+                            <div class="info-row">
+                                <span class="label">Contact Name</span>
+                                <input type="text" id="profile-emergency-name" class="profile-input wide"
+                                    value="Jane Doe" disabled>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Phone Number</span>
+                                <input type="tel" id="profile-emergency-phone" class="profile-input wide"
+                                    value="+1 234 567 890" disabled>
+                            </div>
+                        </div>
+
+                        <div class="detail-card">
+                            <h3>Medical Team</h3>
+                            <div class="info-row">
+                                <span class="label">Primary Doctor</span>
+                                <input type="text" id="profile-doctor" class="profile-input wide"
+                                    value="Dr. Sarah Smith" disabled>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Clinic/Hospital</span>
+                                <input type="text" id="profile-clinic" class="profile-input wide"
+                                    value="Central Medical Care" disabled>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="profile-actions hidden" id="edit-actions">
+                        <button class="save-btn" onclick="saveProfileChanges()">Save Changes</button>
+                        <button class="cancel-btn" onclick="toggleEditMode()">Cancel</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Right Panel: Quick Contacts & Tips -->
+        <aside class="right-panel">
+            <div class="panel-section">
+                <h3>Quick Tips</h3>
+                <div class="tip-card">
+                    <i class="fas fa-lightbulb"></i>
+                    <p>Stay hydrated! Drinking enough water can prevent headaches and fatigue.</p>
+                </div>
+                <div class="tip-card">
+                    <i class="fas fa-running"></i>
+                    <p>A 30-minute walk daily reduces heart disease risk by 35%.</p>
+                </div>
+            </div>
+
+            <div class="panel-section">
+                <h3>Doctors Near You</h3>
+                <div class="doctor-card">
+                    <img src="https://ui-avatars.com/api/?name=Dr+Smith&background=random" alt="Doc">
+                    <div class="doc-info">
+                        <p class="doc-name">Dr. Sarah Smith</p>
+                        <p class="doc-spec">Cardiologist (2.4 km)</p>
+                    </div>
+                </div>
+                <div class="doctor-card">
+                    <img src="https://ui-avatars.com/api/?name=Dr+Jones&background=random" alt="Doc">
+                    <div class="doc-info">
+                        <p class="doc-name">Dr. Michael Jones</p>
+                        <p class="doc-spec">General Physician (3.1 km)</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | MediMind AI</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="auth-page">
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <i class="fas fa-heartbeat logo-icon"></i>
+                <h1>MediMind AI</h1>
+                <p>Your Health, Powered by Intelligence</p>
+            </div>
+
+            <div id="login-form">
+                <h2>Welcome Back</h2>
+                <p class="auth-subtitle">Please enter your details to continue</p>
+
+                <div class="input-group">
+                    <label>Email Address</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="login-email" placeholder="name@example.com" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Password</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="login-password" placeholder="••••••••" required>
+                    </div>
+                </div>
+
+                <button class="auth-btn" onclick="handleLogin()">Sign In</button>
+
+                <p class="auth-footer">
+                    Don't have an account? <span onclick="toggleAuth()">Sign Up</span>
+                </p>
+            </div>
+
+            <div id="signup-form" class="hidden">
+                <h2>Create Account</h2>
+                <p class="auth-subtitle">Join the medical revolution today</p>
+
+                <div class="input-group">
+                    <label>Full Name</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="signup-name" placeholder="John Doe" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Email Address</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="signup-email" placeholder="name@example.com" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Password</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="signup-password" placeholder="••••••••" required>
+                    </div>
+                </div>
+
+                <button class="auth-btn" onclick="handleSignup()">Create Account</button>
+
+                <p class="auth-footer">
+                    Already have an account? <span onclick="toggleAuth()">Sign In</span>
+                </p>
+            </div>
+
+            <div id="auth-error" class="error-msg hidden"></div>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+</body>
+
+</html>
